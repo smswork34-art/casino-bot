@@ -248,14 +248,27 @@
             document.getElementById('balanceDisplay').textContent = balance.toFixed(2) + ' USDT';
         }
 
-        function deposit() {
-            var amount = parseFloat(document.getElementById('depositInput').value);
-            if (!amount || amount < 1) return;
-            var payLink = 'https://t.me/send?start=IVbVWg5ECEkD';
-            if (TG) TG.openLink(payLink);
-            else window.open(payLink, '_blank');
-            document.getElementById('depositOverlay').classList.remove('show');
+       async function deposit() {
+    var amount = parseFloat(document.getElementById('depositInput').value);
+    if (!amount || amount < 1) return;
+    try {
+        var r = await fetch(API + '/create-invoice', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({user_id: userId, amount: amount})
+        });
+        var d = await r.json();
+        if (d.pay_url) {
+            if (TG) TG.openLink(d.pay_url);
+            else window.open(d.pay_url, '_blank');
+        } else {
+            alert('Ошибка создания счёта');
         }
+    } catch(e) {
+        alert('Ошибка соединения');
+    }
+    document.getElementById('depositOverlay').classList.remove('show');
+}
 
         document.getElementById('btnDeposit').addEventListener('click', function() {
             document.getElementById('depositOverlay').classList.add('show');

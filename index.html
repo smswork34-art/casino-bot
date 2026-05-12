@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Blackjack</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f0f0f;
+            --card-bg: #1c1c1e;
+            --gray: #2c2c2e;
+            --gray2: #3a3a3c;
+            --text: #ffffff;
+            --sub: #8e8e93;
+            --blue: #007aff;
+            --green: #34c759;
+            --red: #ff453a;
+            --gold: #ffd60a;
+            --radius: 16px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: var(--bg);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        .app { width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 20px; }
+        .card {
+            background: var(--card-bg); border-radius: 24px;
+            padding: 24px 20px 28px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+        }
+        .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+        .header h2 { font-size: 20px; font-weight: 600; }
+        .badge {
+            background: var(--gray); padding: 6px 12px; border-radius: 20px;
+            font-size: 13px; font-weight: 500; color: var(--sub);
+            display: flex; align-items: center; gap: 6px;
+        }
+        .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+
+        .balance-row {
+            display: flex; align-items: center; justify-content: space-between;
+            background: var(--gray); border-radius: var(--radius);
+            padding: 12px 16px; margin-bottom: 16px;
+        }
+        .balance-info { display: flex; flex-direction: column; gap: 2px; }
+        .balance-label { font-size: 12px; color: var(--sub); }
+        .balance-value { font-size: 20px; font-weight: 700; }
+        .btn-deposit {
+            background: var(--blue); color: #fff; border: none;
+            border-radius: 12px; padding: 10px 16px;
+            font-size: 13px; font-weight: 600; cursor: pointer;
+            font-family: inherit; white-space: nowrap;
+        }
+
+        .dealer-section, .player-section { margin-bottom: 12px; }
+        .section-label { font-size: 13px; color: var(--sub); margin-bottom: 8px; }
+        .score { font-size: 14px; font-weight: 600; color: var(--text); margin-left: 6px; }
+
+        .cards-row { display: flex; gap: 8px; flex-wrap: wrap; min-height: 60px; }
+        .playing-card {
+            width: 50px; height: 70px; border-radius: 10px;
+            background: #fff; color: #000; font-weight: 700;
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; font-size: 18px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            animation: dealCard 0.3s ease-out;
+        }
+        @keyframes dealCard {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .playing-card.red { color: #d32f2f; }
+        .playing-card.back {
+            background: var(--blue); color: transparent;
+            background-image: repeating-linear-gradient(45deg, transparent, transparent 3px, rgba(255,255,255,0.1) 3px, rgba(255,255,255,0.1) 6px);
+        }
+        .card-suit { font-size: 14px; }
+
+        .deposit-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7); display: none;
+            align-items: center; justify-content: center; z-index: 100;
+        }
+        .deposit-overlay.show { display: flex; }
+        .deposit-popup {
+            background: var(--card-bg); border-radius: 24px;
+            padding: 24px; text-align: center; max-width: 300px; width: 90%;
+        }
+        .deposit-input {
+            width: 100%; background: var(--gray); border: 1px solid var(--gray2);
+            border-radius: 14px; padding: 14px; font-size: 18px;
+            font-weight: 600; color: var(--text); outline: none;
+            font-family: inherit; text-align: center; margin: 16px 0;
+        }
+        .deposit-btn {
+            width: 100%; padding: 14px; border-radius: 14px;
+            background: var(--blue); color: #fff; border: none;
+            font-size: 16px; font-weight: 600; cursor: pointer; font-family: inherit;
+        }
+        .deposit-close {
+            background: transparent; color: var(--sub); border: none;
+            font-size: 14px; cursor: pointer; margin-top: 8px; font-family: inherit;
+        }
+
+        .bet-block {
+            display: flex; margin: 12px 0;
+            background: var(--gray); border-radius: var(--radius);
+            overflow: hidden; border: 1px solid var(--gray2);
+        }
+        .bet-input {
+            flex: 1; background: transparent; border: none;
+            padding: 14px 16px; font-size: 16px; font-weight: 600;
+            color: var(--text); outline: none; font-family: inherit;
+        }
+        .bet-currency {
+            display: flex; align-items: center; padding: 0 12px;
+            color: var(--sub); font-size: 14px; border-left: 1px solid var(--gray2);
+        }
+        .btn-bet {
+            background: var(--green); color: #000; border: none;
+            padding: 14px 20px; font-size: 15px; font-weight: 700;
+            cursor: pointer; font-family: inherit;
+        }
+
+        .action-row { display: flex; gap: 8px; margin-top: 8px; }
+        .btn {
+            flex: 1; border: none; border-radius: var(--radius); padding: 14px;
+            font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit;
+        }
+        .btn-hit { background: var(--blue); color: #fff; }
+        .btn-stand { background: var(--gray); color: var(--text); border: 1px solid var(--gray2); }
+        .btn-double { background: var(--gold); color: #000; }
+        .btn:disabled { opacity: 0.4; pointer-events: none; }
+
+        .result-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7); display: none;
+            align-items: center; justify-content: center; z-index: 100;
+        }
+        .result-overlay.show { display: flex; }
+        .result-popup {
+            background: var(--card-bg); border-radius: 24px;
+            padding: 30px 24px; text-align: center; max-width: 300px; width: 90%;
+        }
+        .result-text { font-size: 22px; font-weight: 700; margin: 16px 0; }
+        .result-amount { font-size: 36px; font-weight: 700; }
+        .win { color: var(--green); } .lose { color: var(--red); } .push { color: var(--gold); }
+        .result-close {
+            margin-top: 16px; padding: 12px 30px;
+            border-radius: 14px; background: var(--blue);
+            color: #fff; border: none; font-size: 16px;
+            font-weight: 600; cursor: pointer; font-family: inherit;
+            width: 100%;
+        }
+
+        .footer {
+            background: var(--card-bg); border-radius: 24px; padding: 20px;
+            font-size: 12px; color: var(--sub);
+        }
+        .footer-links { display: flex; justify-content: center; gap: 8px; margin-bottom: 12px; font-size: 13px; }
+        .footer-links a { color: var(--blue); text-decoration: none; font-weight: 500; }
+        .footer-divider { height: 1px; background: var(--gray2); margin: 12px 0; }
+        .footer-copy { text-align: center; font-size: 11px; color: #636366; }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <div class="card">
+            <div class="header">
+                <h2>Blackjack</h2>
+                <div class="badge"><span class="dot"></span> USDT</div>
+            </div>
+
+            <div class="balance-row">
+                <div class="balance-info">
+                    <span class="balance-label">Баланс</span>
+                    <span class="balance-value" id="balanceDisplay">100.00 USDT</span>
+                </div>
+                <button class="btn-deposit" id="btnDeposit">+ Пополнить</button>
+            </div>
+
+            <div class="dealer-section">
+                <div class="section-label">Dealer <span class="score" id="dealerScore"></span></div>
+                <div class="cards-row" id="dealerCards"></div>
+            </div>
+            <div class="player-section">
+                <div class="section-label">You <span class="score" id="playerScore"></span></div>
+                <div class="cards-row" id="playerCards"></div>
+            </div>
+
+            <div class="bet-block" id="betBlock">
+                <input type="number" class="bet-input" id="betInput" placeholder="0" value="1" min="1">
+                <span class="bet-currency">USDT</span>
+                <button class="btn-bet" id="btnBet">Ставка</button>
+            </div>
+
+            <div class="action-row" id="actionRow" style="display:none;">
+                <button class="btn btn-hit" id="btnHit">Hit</button>
+                <button class="btn btn-stand" id="btnStand">Stand</button>
+                <button class="btn btn-double" id="btnDouble">Double</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="deposit-overlay" id="depositOverlay">
+        <div class="deposit-popup">
+            <h3>Пополнить баланс</h3>
+            <input type="number" class="deposit-input" id="depositInput" placeholder="Сумма USDT" value="10" min="1">
+            <button class="deposit-btn" id="depositConfirm">Оплатить через @send</button>
+            <button class="deposit-close" id="depositClose">Отмена</button>
+        </div>
+    </div>
+
+    <div class="result-overlay" id="resultOverlay">
+        <div class="result-popup">
+            <div class="result-text" id="resultText">Win!</div>
+            <div class="result-amount" id="resultAmount">+1 USDT</div>
+            <button class="result-close" id="resultCloseBtn">New game</button>
+        </div>
+    </div>
+
+    <script>
+        var TG = window.Telegram ? window.Telegram.WebApp : null;
+        var userId = TG ? TG.initDataUnsafe.user.id : 12345;
+        var API = 'https://casino-obmen.onrender.com';
+
+        var suits = ['♠', '♥', '♦', '♣'];
+        var values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+        var balance = 100;
+        var bet = 1;
+        var deck = [], dealerCards = [], playerCards = [];
+        var gameOver = true;
+
+        async function fetchBalance() {
+            try {
+                var r = await fetch(API + '/balance/' + userId);
+                var d = await r.json();
+                balance = d.balance;
+            } catch(e) {}
+            document.getElementById('balanceDisplay').textContent = balance.toFixed(2) + ' USDT';
+        }
+
+        function deposit() {
+            var amount = parseFloat(document.getElementById('depositInput').value);
+            if (!amount || amount < 1) return;
+            var payLink = 'https://t.me/send?start=IVbVWg5ECEkD';
+            if (TG) TG.openLink(payLink);
+            else window.open(payLink, '_blank');
+            document.getElementById('depositOverlay').classList.remove('show');
+        }
+
+        document.getElementById('btnDeposit').addEventListener('click', function() {
+            document.getElementById('depositOverlay').classList.add('show');
+        });
+        document.getElementById('depositClose').addEventListener('click', function() {
+            document.getElementById('depositOverlay').classList.remove('show');
+        });
+        document.getElementById('depositConfirm').addEventListener('click', deposit);
+
+        function shuffle() {
+            deck = [];
+            for (var s = 0; s < 4; s++)
+                for (var v = 0; v < 13; v++)
+                    deck.push({ suit: suits[s], value: values[v] });
+            for (var i = deck.length - 1; i > 0; i--) {
+                var j = Math.floor(Math.random() * (i + 1));
+                var t = deck[i]; deck[i] = deck[j]; deck[j] = t;
+            }
+        }
+
+        function val(c) { var s=0,a=0; for(var i=0;i<c.length;i++){var v=c[i].value;if(v==='A'){a++;s+=11}else if(v==='K'||v==='Q'||v==='J')s+=10;else s+=parseInt(v)}while(s>21&&a>0){s-=10;a--}return s }
+        function ch(c,h){var r=c.suit==='♥'||c.suit==='♦';if(h)return'<div class="playing-card back"></div>';return'<div class="playing-card'+(r?' red':'')+'">'+c.value+'<span class="card-suit">'+c.suit+'</span></div>'}
+        function render() {
+            var dd=document.getElementById('dealerCards'),pd=document.getElementById('playerCards');
+            dd.innerHTML='';for(var i=0;i<dealerCards.length;i++)dd.innerHTML+=ch(dealerCards[i],(i===1&&!gameOver));
+            pd.innerHTML='';for(var j=0;j<playerCards.length;j++)pd.innerHTML+=ch(playerCards[j],false);
+            document.getElementById('dealerScore').textContent=gameOver?val(dealerCards):'?';
+            document.getElementById('playerScore').textContent=val(playerCards);
+            document.getElementById('balanceDisplay').textContent=balance.toFixed(2)+' USDT';
+        }
+
+        function startGame() {
+            if(balance<bet){alert('Недостаточно средств');return}
+            shuffle(); dealerCards=[deck.pop(),deck.pop()]; playerCards=[deck.pop(),deck.pop()];
+            gameOver=false; balance-=bet;
+            document.getElementById('betBlock').style.display='none';
+            document.getElementById('actionRow').style.display='flex';
+            document.getElementById('btnHit').disabled=false;
+            document.getElementById('btnStand').disabled=false;
+            document.getElementById('btnDouble').disabled=false;
+            render(); if(val(playerCards)===21) stand();
+        }
+
+        function hit(){playerCards.push(deck.pop());document.getElementById('btnDouble').disabled=true;render();if(val(playerCards)>=21)stand()}
+        function stand(){gameOver=true;document.getElementById('btnHit').disabled=true;document.getElementById('btnStand').disabled=true;document.getElementById('btnDouble').disabled=true;while(val(dealerCards)<17)dealerCards.push(deck.pop());render();setTimeout(showResult,700)}
+        function double(){if(balance<bet)return;balance-=bet;bet*=2;playerCards.push(deck.pop());stand()}
+
+        function showResult() {
+            var p=val(playerCards),d=val(dealerCards),win=0,msg='';
+            if(p>21){msg='Bust!';win=0}else if(d>21){msg='Dealer bust!';win=bet*2}else if(p>d){msg='Win!';win=bet*2}else if(p<d){msg='Lose!';win=0}else{msg='Push';win=bet}
+            balance+=win; var diff=win-bet;
+            document.getElementById('resultText').textContent=msg;
+            document.getElementById('resultAmount').textContent=(diff>0?'+'+diff.toFixed(2):diff===0?'0':diff.toFixed(2))+' USDT';
+            document.getElementById('resultAmount').className='result-amount '+(diff>0?'win':diff===0?'push':'lose');
+            document.getElementById('resultOverlay').classList.add('show');
+            render();
+        }
+
+        document.getElementById('resultCloseBtn').addEventListener('click',function(){
+            document.getElementById('resultOverlay').classList.remove('show');
+            document.getElementById('betBlock').style.display='flex';
+            document.getElementById('actionRow').style.display='none';
+            document.getElementById('dealerCards').innerHTML='';
+            document.getElementById('playerCards').innerHTML='';
+            document.getElementById('dealerScore').textContent='';
+            document.getElementById('playerScore').textContent='';
+            fetchBalance();
+        });
+
+        document.getElementById('btnBet').addEventListener('click',function(){
+            bet=parseFloat(document.getElementById('betInput').value)||1;
+            startGame();
+        });
+        document.getElementById('btnHit').addEventListener('click',hit);
+        document.getElementById('btnStand').addEventListener('click',stand);
+        document.getElementById('btnDouble').addEventListener('click',double);
+
+        fetchBalance();
+        render();
+    </script>
+</body>
+</html>

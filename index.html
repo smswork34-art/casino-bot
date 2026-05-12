@@ -255,7 +255,27 @@
             } catch(e) {}
         }
 
-        async function depositPay() {
+        async function async function depositPay() {
+    var amount = parseFloat($('depositInput').value);
+    if (!amount || amount < 1) return;
+    try {
+        var r = await fetch(API + '/create-invoice', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({user_id: userId, amount: amount})
+        });
+        var d = await r.json();
+        console.log('INVOICE DATA:', d);
+        if (d.pay_url) {
+            lastInvoiceId = d.invoice_id;
+            console.log('SAVED INVOICE ID:', lastInvoiceId);
+            if (TG) TG.openLink(d.pay_url);
+            else window.open(d.pay_url, '_blank');
+        }
+    } catch(e) {
+        console.log('ERROR:', e);
+    }
+} {
             var amount = parseFloat($('depositInput').value);
             if (!amount || amount < 1) return;
             try {

@@ -486,14 +486,13 @@
 }
 
         $('resultCloseBtn').addEventListener('click',function(){
-            $('resultOverlay').classList.remove('show');
-            $('betBlock').style.display='block'; $('actionRow').style.display='none';
-            $('dealerCards').innerHTML=''; $('playerCards').innerHTML='';
-            $('dealerScore').textContent=''; $('playerScore').textContent='';
-            fetchBalance();
-            bet=parseFloat($('betInput').value)||1;
-            updateUI();
-        });
+    $('resultOverlay').classList.remove('show');
+    $('betBlock').style.display='block'; $('actionRow').style.display='none';
+    $('dealerCards').innerHTML=''; $('playerCards').innerHTML='';
+    $('dealerScore').textContent=''; $('playerScore').textContent='';
+    bet=parseFloat($('betInput').value)||1;
+    updateUI();
+});
 
         $('btnBet').addEventListener('click',function(){bet=parseFloat($('betInput').value)||1;startGame();});
         $('btnHit').addEventListener('click',hit);

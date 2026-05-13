@@ -462,18 +462,28 @@
         function stand(){gameOver=true;$('btnHit').disabled=true;$('btnStand').disabled=true;$('btnDouble').disabled=true;while(val(dealerCards)<17)dealerCards.push(deck.pop());render();setTimeout(showResult,700)}
         function double(){if(balance<bet)return;balance-=bet;bet*=2;playerCards.push(deck.pop());stand()}
 
-        function showResult() {
-            var p=val(playerCards),d=val(dealerCards),win=0,msg='';
-            if(p>21){msg='Bust!';win=0;losses++}else if(d>21){msg='Dealer bust!';win=bet*2;wins++}else if(p>d){msg='Win!';win=bet*2;wins++}else if(p<d){msg='Lose!';win=0;losses++}else{msg='Push';win=bet}
-            balance+=win; var diff=win-bet;
-            totalGames++; if(diff>0) totalWon+=diff;
-            $('resultText').textContent=msg;
-            $('resultAmount').textContent=(diff>0?'+'+diff.toFixed(2):diff===0?'0':diff.toFixed(2))+' USDT';
-            $('resultAmount').className='result-amount '+(diff>0?'win':diff===0?'push':'lose');
-            $('resultOverlay').classList.add('show');
-            updateUI();
-            render();
-        }
+        async function showResult() {
+    var p=val(playerCards),d=val(dealerCards),win=0,msg='';
+    if(p>21){msg='Bust!';win=0;losses++}else if(d>21){msg='Dealer bust!';win=bet*2;wins++}else if(p>d){msg='Win!';win=bet*2;wins++}else if(p<d){msg='Lose!';win=0;losses++}else{msg='Push';win=bet}
+    balance += win;
+    var diff = win - bet;
+    totalGames++; if(diff>0) totalWon+=diff;
+
+    // Сохраняем баланс на сервер
+    try {
+        await fetch(API + '/update-balance', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({user_id: userId, amount: balance})
+        });
+    } catch(e) {}
+
+    $('resultText').textContent=msg;
+    $('resultAmount').textContent=(diff>0?'+'+diff.toFixed(2):diff===0?'0':diff.toFixed(2))+' USDT';
+    $('resultAmount').className='result-amount '+(diff>0?'win':diff===0?'push':'lose');
+    $('resultOverlay').classList.add('show');
+    updateUI(); render();
+}
 
         $('resultCloseBtn').addEventListener('click',function(){
             $('resultOverlay').classList.remove('show');

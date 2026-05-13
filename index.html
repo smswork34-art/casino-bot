@@ -11,7 +11,7 @@
             --card-bg: #1c1c1e;
             --gray: #2c2c2e;
             --gray2: #3a3a3c;
-            --text: #ffffff;
+            --text: #fff;
             --sub: #8e8e93;
             --blue: #007aff;
             --green: #34c759;
@@ -22,7 +22,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: var(--bg);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Inter', -apple-system, sans-serif;
             color: var(--text);
             min-height: 100vh;
             display: flex;
@@ -30,154 +30,229 @@
             justify-content: center;
             padding: 16px;
         }
-        .app { width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 20px; }
+        .app { width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 12px; }
+
+        /* Верхняя панель */
+        .top-bar {
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 8px;
+        }
+        .top-btn {
+            background: var(--card-bg); border: 1px solid var(--gray2);
+            color: var(--text); padding: 10px 14px; border-radius: 14px;
+            font-size: 13px; font-weight: 600; cursor: pointer;
+            font-family: inherit; display: flex; align-items: center; gap: 6px;
+            transition: all 0.2s;
+        }
+        .top-btn:active { transform: scale(0.95); }
+        .top-btn svg { width: 16px; height: 16px; }
+        .balance-badge {
+            background: var(--card-bg); border: 1px solid var(--gray2);
+            padding: 10px 16px; border-radius: 14px;
+            font-size: 14px; font-weight: 700;
+            display: flex; align-items: center; gap: 6px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(0,122,255,0.3); }
+            50% { box-shadow: 0 0 0 6px rgba(0,122,255,0); }
+        }
+        .balance-badge span:first-child { color: var(--sub); font-size: 11px; font-weight: 400; }
+
+        /* Блок с игрой */
         .card {
             background: var(--card-bg); border-radius: 24px;
-            padding: 24px 20px 28px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            padding: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.6);
         }
-        .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-        .header h2 { font-size: 20px; font-weight: 600; }
-        .badge {
-            background: var(--gray); padding: 6px 12px; border-radius: 20px;
-            font-size: 13px; font-weight: 500; color: var(--sub);
+        .game-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 16px;
         }
-        .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); display: inline-block; margin-right: 4px; }
+        .game-header h2 { font-size: 18px; font-weight: 600; }
 
-        .balance-row {
-            display: flex; align-items: center; justify-content: space-between;
-            background: var(--gray); border-radius: var(--radius);
-            padding: 12px 16px; margin-bottom: 16px;
+        /* Статистика мини */
+        .mini-stats {
+            display: flex; gap: 6px; margin-bottom: 14px;
         }
-        .balance-value { font-size: 20px; font-weight: 700; }
-        .btn-deposit {
-            background: var(--blue); color: #fff; border: none;
-            border-radius: 12px; padding: 10px 16px;
-            font-size: 13px; font-weight: 600; cursor: pointer;
-            font-family: inherit;
+        .mini-stat {
+            flex: 1; background: var(--gray); border-radius: 12px;
+            padding: 10px 12px; text-align: center;
+            border: 1px solid var(--gray2);
+            transition: transform 0.2s;
         }
+        .mini-stat:hover { transform: translateY(-2px); }
+        .mini-stat-value { font-size: 16px; font-weight: 700; }
+        .mini-stat-label { font-size: 10px; color: var(--sub); margin-top: 2px; }
+        .mini-stat.win .mini-stat-value { color: var(--green); }
+        .mini-stat.lose .mini-stat-value { color: var(--red); }
 
-        .dealer-section, .player-section { margin-bottom: 12px; }
-        .section-label { font-size: 13px; color: var(--sub); margin-bottom: 8px; }
-        .cards-row { display: flex; gap: 8px; flex-wrap: wrap; min-height: 60px; }
+        .dealer-section, .player-section { margin-bottom: 10px; }
+        .section-label { font-size: 12px; color: var(--sub); margin-bottom: 6px; }
+        .cards-row { display: flex; gap: 6px; flex-wrap: wrap; min-height: 50px; }
         .playing-card {
-            width: 50px; height: 70px; border-radius: 10px;
+            width: 44px; height: 62px; border-radius: 8px;
             background: #fff; color: #000; font-weight: 700;
             display: flex; flex-direction: column; align-items: center;
-            justify-content: center; font-size: 18px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            justify-content: center; font-size: 16px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.3);
             animation: dealCard 0.3s ease-out;
         }
         @keyframes dealCard {
-            from { transform: translateY(-20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from { transform: translateY(-20px) rotateX(90deg); opacity: 0; }
+            to { transform: translateY(0) rotateX(0); opacity: 1; }
         }
         .playing-card.red { color: #d32f2f; }
         .playing-card.back {
             background: var(--blue); color: transparent;
-            background-image: repeating-linear-gradient(45deg, transparent, transparent 3px, rgba(255,255,255,0.1) 3px, rgba(255,255,255,0.1) 6px);
+            background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(255,255,255,0.15) 2px, rgba(255,255,255,0.15) 4px);
         }
-        .card-suit { font-size: 14px; }
-
-        .deposit-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.7); display: none;
-            align-items: center; justify-content: center; z-index: 100;
-        }
-        .deposit-overlay.show { display: flex; }
-        .deposit-popup {
-            background: var(--card-bg); border-radius: 24px;
-            padding: 24px; text-align: center; max-width: 300px; width: 90%;
-        }
-        .deposit-input {
-            width: 100%; background: var(--gray); border: 1px solid var(--gray2);
-            border-radius: 14px; padding: 14px; font-size: 18px;
-            font-weight: 600; color: var(--text); outline: none;
-            font-family: inherit; text-align: center; margin: 16px 0;
-        }
-        .deposit-btn {
-            width: 100%; padding: 14px; border-radius: 14px;
-            background: var(--blue); color: #fff; border: none;
-            font-size: 16px; font-weight: 600; cursor: pointer; font-family: inherit;
-            margin-top: 8px;
-        }
-        .deposit-close {
-            background: transparent; color: var(--sub); border: none;
-            font-size: 14px; cursor: pointer; margin-top: 8px; font-family: inherit;
-        }
+        .card-suit { font-size: 12px; }
 
         .bet-block {
-            display: flex; margin: 12px 0;
-            background: var(--gray); border-radius: var(--radius);
+            margin: 10px 0;
+        }
+        .bet-row {
+            display: flex; background: var(--gray); border-radius: var(--radius);
             overflow: hidden; border: 1px solid var(--gray2);
         }
+        .bet-row:focus-within { border-color: var(--blue); }
         .bet-input {
             flex: 1; background: transparent; border: none;
-            padding: 14px 16px; font-size: 16px; font-weight: 600;
+            padding: 12px 14px; font-size: 15px; font-weight: 600;
             color: var(--text); outline: none; font-family: inherit;
         }
         .bet-currency {
-            display: flex; align-items: center; padding: 0 12px;
-            color: var(--sub); font-size: 14px; border-left: 1px solid var(--gray2);
+            display: flex; align-items: center; padding: 0 10px;
+            color: var(--sub); font-size: 13px; border-left: 1px solid var(--gray2);
         }
         .btn-bet {
-            background: var(--green); color: #000; border: none;
-            padding: 14px 20px; font-size: 15px; font-weight: 700;
-            cursor: pointer; font-family: inherit;
+            width: 100%; background: var(--green); color: #000; border: none;
+            padding: 14px; font-size: 15px; font-weight: 700;
+            cursor: pointer; font-family: inherit; border-radius: var(--radius);
+            margin-top: 8px;
+            transition: all 0.2s;
         }
+        .btn-bet:active { transform: scale(0.96); }
+        .btn-bet:disabled { background: var(--gray); color: var(--sub); pointer-events: none; }
 
-        .action-row { display: flex; gap: 8px; margin-top: 8px; }
+        .action-row { display: flex; gap: 6px; margin-top: 6px; }
         .btn {
-            flex: 1; border: none; border-radius: var(--radius); padding: 14px;
-            font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit;
+            flex: 1; border: none; border-radius: var(--radius); padding: 12px;
+            font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit;
+            transition: all 0.15s;
         }
+        .btn:active { transform: scale(0.95); }
         .btn-hit { background: var(--blue); color: #fff; }
         .btn-stand { background: var(--gray); color: var(--text); border: 1px solid var(--gray2); }
         .btn-double { background: var(--gold); color: #000; }
         .btn:disabled { opacity: 0.4; pointer-events: none; }
 
-        .result-overlay {
+        /* Нижняя панель */
+        .bottom-bar {
+            display: flex; gap: 8px;
+        }
+        .bottom-btn {
+            flex: 1; background: var(--card-bg); border: 1px solid var(--gray2);
+            color: var(--sub); padding: 12px; border-radius: 14px;
+            font-size: 12px; font-weight: 500; cursor: pointer;
+            font-family: inherit; text-align: center;
+            transition: all 0.2s;
+        }
+        .bottom-btn:hover { color: var(--text); border-color: var(--gray); }
+        .bottom-btn .icon { font-size: 18px; display: block; margin-bottom: 4px; }
+
+        /* Профиль */
+        .profile-overlay, .deposit-overlay, .result-overlay {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0,0,0,0.7); display: none;
             align-items: center; justify-content: center; z-index: 100;
         }
-        .result-overlay.show { display: flex; }
-        .result-popup {
+        .profile-overlay.show, .deposit-overlay.show, .result-overlay.show { display: flex; }
+        .popup {
             background: var(--card-bg); border-radius: 24px;
-            padding: 30px 24px; text-align: center; max-width: 300px; width: 90%;
+            padding: 24px; text-align: center; max-width: 290px; width: 90%;
+            animation: popIn 0.3s ease-out;
         }
-        .result-text { font-size: 22px; font-weight: 700; margin: 16px 0; }
-        .result-amount { font-size: 36px; font-weight: 700; }
-        .win { color: var(--green); } .lose { color: var(--red); } .push { color: var(--gold); }
-        .result-close {
-            margin-top: 16px; padding: 12px 30px;
-            border-radius: 14px; background: var(--blue);
-            color: #fff; border: none; font-size: 16px;
-            font-weight: 600; cursor: pointer; font-family: inherit;
-            width: 100%;
+        @keyframes popIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .profile-avatar {
+            width: 56px; height: 56px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--blue), #5856d6);
+            margin: 0 auto 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; font-weight: 700;
+        }
+        .profile-name { font-size: 16px; font-weight: 700; }
+        .profile-id { font-size: 11px; color: var(--sub); margin: 4px 0 14px; }
+        .profile-stat {
+            display: flex; justify-content: space-between;
+            padding: 8px 0; font-size: 13px; color: var(--sub);
+            border-bottom: 1px solid var(--gray2);
+        }
+        .profile-stat:last-child { border-bottom: none; }
+        .profile-stat span:last-child { color: var(--text); font-weight: 600; }
+        .popup-close {
+            margin-top: 14px; padding: 12px; border-radius: 14px;
+            background: var(--gray); color: var(--text); border: none;
+            font-size: 14px; font-weight: 600; cursor: pointer;
+            font-family: inherit; width: 100%;
         }
 
-        .footer {
-            background: var(--card-bg); border-radius: 24px; padding: 20px;
-            font-size: 12px; color: var(--sub);
+        .deposit-input {
+            width: 100%; background: var(--gray); border: 1px solid var(--gray2);
+            border-radius: 14px; padding: 12px; font-size: 16px;
+            font-weight: 600; color: var(--text); outline: none;
+            font-family: inherit; text-align: center; margin: 10px 0;
         }
-        .footer-links { display: flex; justify-content: center; gap: 8px; margin-bottom: 12px; font-size: 13px; }
-        .footer-links a { color: var(--blue); text-decoration: none; }
-        .footer-divider { height: 1px; background: var(--gray2); margin: 12px 0; }
-        .footer-copy { text-align: center; font-size: 11px; color: #636366; }
+        .deposit-btn {
+            width: 100%; padding: 12px; border-radius: 14px;
+            background: var(--blue); color: #fff; border: none;
+            font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit;
+            margin-top: 6px;
+        }
+
+        .result-text { font-size: 20px; font-weight: 700; margin: 10px 0; }
+        .result-amount { font-size: 32px; font-weight: 700; }
+        .win { color: var(--green); } .lose { color: var(--red); } .push { color: var(--gold); }
     </style>
 </head>
 <body>
     <div class="app">
-        <div class="card">
-            <div class="header">
-                <h2>Blackjack</h2>
-                <div class="badge"><span class="dot"></span> USDT</div>
+        <!-- Верх -->
+        <div class="top-bar">
+            <button class="top-btn" id="btnProfile">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Профиль
+            </button>
+            <div class="balance-badge">
+                <span>Баланс</span>
+                <span id="balanceDisplay">100.00</span>
             </div>
+            <button class="top-btn" id="btnDeposit">+ Пополнить</button>
+        </div>
 
-            <div class="balance-row">
-                <span class="balance-value" id="balanceDisplay">100.00 USDT</span>
-                <button class="btn-deposit" id="btnDeposit">+ Пополнить</button>
+        <!-- Мини-статистика -->
+        <div class="mini-stats">
+            <div class="mini-stat win">
+                <div class="mini-stat-value" id="statWins">0</div>
+                <div class="mini-stat-label">Побед</div>
+            </div>
+            <div class="mini-stat lose">
+                <div class="mini-stat-value" id="statLosses">0</div>
+                <div class="mini-stat-label">Поражений</div>
+            </div>
+            <div class="mini-stat">
+                <div class="mini-stat-value" id="statGames">0</div>
+                <div class="mini-stat-label">Игр</div>
+            </div>
+        </div>
+
+        <!-- Игра -->
+        <div class="card">
+            <div class="game-header">
+                <h2>Blackjack</h2>
             </div>
 
             <div class="dealer-section">
@@ -190,9 +265,11 @@
             </div>
 
             <div class="bet-block" id="betBlock">
-                <input type="number" class="bet-input" id="betInput" value="1" min="1">
-                <span class="bet-currency">USDT</span>
-                <button class="btn-bet" id="btnBet">Ставка</button>
+                <div class="bet-row">
+                    <input type="number" class="bet-input" id="betInput" value="1" min="1">
+                    <span class="bet-currency">USDT</span>
+                </div>
+                <button class="btn-bet" id="btnBet">Сделать ставку</button>
             </div>
 
             <div class="action-row" id="actionRow" style="display:none;">
@@ -202,160 +279,223 @@
             </div>
         </div>
 
-        <div class="footer">
-            <div class="footer-links">
-                <a href="oferta.html">Оферта</a> · 
-                <a href="privacy.html">Конфиденциальность</a> · 
-                <a href="contacts.html">Контакты</a>
+        <!-- Нижняя панель -->
+        <div class="bottom-bar">
+            <div class="bottom-btn" id="btnRules">
+                <span class="icon">♠</span>Правила
             </div>
-            <div class="footer-divider"></div>
-            <div class="footer-copy">© 2025 Casino</div>
+            <div class="bottom-btn" id="btnHistory">
+                <span class="icon">♣</span>История
+            </div>
+            <div class="bottom-btn" id="btnSupport">
+                <span class="icon">♦</span>Поддержка
+            </div>
         </div>
     </div>
 
+    <!-- Профиль -->
+    <div class="profile-overlay" id="profileOverlay">
+        <div class="popup">
+            <div class="profile-avatar" id="profileAvatar">?</div>
+            <div class="profile-name" id="profileName">Игрок</div>
+            <div class="profile-id" id="profileId">ID: ---</div>
+            <div class="profile-stat"><span>Баланс</span><span id="profileBalance">0 USDT</span></div>
+            <div class="profile-stat"><span>Сыграно</span><span id="profileGames">0</span></div>
+            <div class="profile-stat"><span>Выиграно</span><span id="profileWon">0 USDT</span></div>
+            <button class="popup-close" id="profileClose">Закрыть</button>
+        </div>
+    </div>
+
+    <!-- Пополнение -->
     <div class="deposit-overlay" id="depositOverlay">
-        <div class="deposit-popup">
-            <h3>Пополнить баланс</h3>
+        <div class="popup">
+            <h3 style="margin-bottom:6px;">Пополнить баланс</h3>
             <input type="number" class="deposit-input" id="depositInput" value="10" min="1">
             <button class="deposit-btn" id="depositPay">Оплатить через @send</button>
             <button class="deposit-btn" id="depositCheck" style="background:var(--gray);color:var(--text);">Проверить оплату</button>
-            <button class="deposit-close" id="depositClose">Отмена</button>
+            <button class="popup-close" id="depositClose" style="background:transparent;color:var(--sub);">Отмена</button>
         </div>
     </div>
 
+    <!-- Результат -->
     <div class="result-overlay" id="resultOverlay">
-        <div class="result-popup">
+        <div class="popup">
             <div class="result-text" id="resultText">Win!</div>
             <div class="result-amount" id="resultAmount">+1 USDT</div>
-            <button class="result-close" id="resultCloseBtn">New game</button>
+            <button class="popup-close" id="resultCloseBtn">New game</button>
         </div>
     </div>
 
     <script>
-    var TG = window.Telegram ? window.Telegram.WebApp : null;
-    var userId = TG ? TG.initDataUnsafe.user.id : 7518728008;
-    var API = 'https://casino-obmen.onrender.com';
-    var lastInvoiceId = '';
+        var TG = window.Telegram ? window.Telegram.WebApp : null;
+        var userId = TG ? TG.initDataUnsafe.user.id : 7518728008;
+        var userName = TG ? TG.initDataUnsafe.user.first_name : 'Игрок';
+        var API = 'https://casino-obmen.onrender.com';
+        var lastInvoiceId = '';
+        var wins = 0, losses = 0, totalGames = 0, totalWon = 0;
 
-    var suits = ['♠', '♥', '♦', '♣'];
-    var values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
-    var balance = 100;
-    var bet = 1;
-    var deck = [], dealerCards = [], playerCards = [];
-    var gameOver = true;
+        var suits = ['♠', '♥', '♦', '♣'];
+        var values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+        var balance = 100;
+        var bet = 1;
+        var deck = [], dealerCards = [], playerCards = [];
+        var gameOver = true;
 
-    function $(id) { return document.getElementById(id); }
+        function $(id) { return document.getElementById(id); }
 
-    async function fetchBalance() {
-        try {
-            var r = await fetch(API + '/balance/' + userId);
-            var d = await r.json();
-            balance = d.balance;
-            $('balanceDisplay').textContent = balance.toFixed(2) + ' USDT';
-        } catch(e) {}
-    }
+        async function fetchBalance() {
+            try {
+                var r = await fetch(API + '/balance/' + userId);
+                var d = await r.json();
+                balance = d.balance;
+                updateUI();
+            } catch(e) {}
+        }
 
-    async function depositPay() {
-        var amount = parseFloat($('depositInput').value);
-        if (!amount || amount < 1) return;
-        try {
-            var r = await fetch(API + '/create-invoice', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({user_id: userId, amount: amount})
+        function updateUI() {
+            $('balanceDisplay').textContent = balance.toFixed(2);
+            $('profileBalance').textContent = balance.toFixed(2) + ' USDT';
+            $('statWins').textContent = wins;
+            $('statLosses').textContent = losses;
+            $('statGames').textContent = totalGames;
+            $('profileGames').textContent = totalGames;
+            $('profileWon').textContent = totalWon.toFixed(2) + ' USDT';
+            if (balance < 1 && gameOver) {
+                $('btnBet').disabled = true;
+                $('btnBet').textContent = 'Недостаточно средств';
+            } else if (gameOver) {
+                $('btnBet').disabled = false;
+                $('btnBet').textContent = 'Сделать ставку';
+            }
+        }
+
+        function openProfile() {
+            $('profileAvatar').textContent = userName.charAt(0).toUpperCase();
+            $('profileName').textContent = userName;
+            $('profileId').textContent = 'ID: ' + userId;
+            updateUI();
+            $('profileOverlay').classList.add('show');
+        }
+
+        $('btnProfile').addEventListener('click', openProfile);
+        $('profileClose').addEventListener('click', function() { $('profileOverlay').classList.remove('show'); });
+        $('btnDeposit').addEventListener('click', function() { $('depositOverlay').classList.add('show'); });
+        $('depositClose').addEventListener('click', function() { $('depositOverlay').classList.remove('show'); });
+
+        async function depositPay() {
+            var amount = parseFloat($('depositInput').value);
+            if (!amount || amount < 1) return;
+            try {
+                var r = await fetch(API + '/create-invoice', {
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({user_id: userId, amount: amount})
+                });
+                var d = await r.json();
+                if (d.pay_url) {
+                    lastInvoiceId = d.invoice_id;
+                    if (TG) TG.openLink(d.pay_url);
+                    else window.open(d.pay_url, '_blank');
+                }
+            } catch(e) {}
+        }
+
+        async function depositCheck() {
+            if (!lastInvoiceId) { alert('Сначала создайте счёт'); return; }
+            var r = await fetch(API + '/check-invoice', {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({invoice_id: lastInvoiceId})
             });
             var d = await r.json();
-            if (d.pay_url) {
-                lastInvoiceId = d.invoice_id;
-                if (TG) TG.openLink(d.pay_url);
-                else window.open(d.pay_url, '_blank');
-            }
-        } catch(e) {}
-    }
+            if (d.paid) {
+                alert('Баланс пополнен!');
+                fetchBalance();
+                $('depositOverlay').classList.remove('show');
+            } else { alert('Оплата не найдена.'); }
+        }
 
-    async function depositCheck() {
-        if (!lastInvoiceId) { alert('Сначала создайте счёт'); return; }
-        var r = await fetch(API + '/check-invoice', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({invoice_id: lastInvoiceId})
+        $('depositPay').addEventListener('click', depositPay);
+        $('depositCheck').addEventListener('click', depositCheck);
+
+        $('btnRules').addEventListener('click', function() {
+            alert('Цель: набрать 21 или больше чем у дилера, но не более 21.\nКарты: 2-10 = номинал, J/Q/K = 10, A = 1 или 11.');
         });
-        var d = await r.json();
-        if (d.paid) {
-            alert('Баланс пополнен!');
+        $('btnHistory').addEventListener('click', function() {
+            alert('Побед: ' + wins + '\nПоражений: ' + losses + '\nВсего игр: ' + totalGames + '\nВыиграно: ' + totalWon.toFixed(2) + ' USDT');
+        });
+        $('btnSupport').addEventListener('click', function() {
+            if (TG) TG.openTelegramLink('https://t.me/support_usdt_rub');
+            else window.open('https://t.me/support_usdt_rub');
+        });
+
+        function shuffle() {
+            deck = [];
+            for (var s = 0; s < 4; s++)
+                for (var v = 0; v < 13; v++)
+                    deck.push({ suit: suits[s], value: values[v] });
+            for (var i = deck.length - 1; i > 0; i--) {
+                var j = Math.floor(Math.random() * (i + 1));
+                var t = deck[i]; deck[i] = deck[j]; deck[j] = t;
+            }
+        }
+
+        function val(c) { var s=0,a=0; for(var i=0;i<c.length;i++){var v=c[i].value;if(v==='A'){a++;s+=11}else if(v==='K'||v==='Q'||v==='J')s+=10;else s+=parseInt(v)}while(s>21&&a>0){s-=10;a--}return s }
+        function ch(c,h){var r=c.suit==='♥'||c.suit==='♦';if(h)return'<div class="playing-card back"></div>';return'<div class="playing-card'+(r?' red':'')+'">'+c.value+'<span class="card-suit">'+c.suit+'</span></div>'}
+        function render() {
+            $('dealerCards').innerHTML='';for(var i=0;i<dealerCards.length;i++)$('dealerCards').innerHTML+=ch(dealerCards[i],(i===1&&!gameOver));
+            $('playerCards').innerHTML='';for(var j=0;j<playerCards.length;j++)$('playerCards').innerHTML+=ch(playerCards[j],false);
+            $('dealerScore').textContent=gameOver?val(dealerCards):'?';
+            $('playerScore').textContent=val(playerCards);
+            updateUI();
+        }
+
+        function startGame() {
+            if(balance<bet){alert('Недостаточно средств');return}
+            shuffle(); dealerCards=[deck.pop(),deck.pop()]; playerCards=[deck.pop(),deck.pop()];
+            gameOver=false; balance-=bet;
+            $('betBlock').style.display='none'; $('actionRow').style.display='flex';
+            $('btnHit').disabled=false; $('btnStand').disabled=false; $('btnDouble').disabled=false;
+            updateUI();
+            render(); if(val(playerCards)===21) stand();
+        }
+
+        function hit(){playerCards.push(deck.pop());$('btnDouble').disabled=true;render();if(val(playerCards)>=21)stand()}
+        function stand(){gameOver=true;$('btnHit').disabled=true;$('btnStand').disabled=true;$('btnDouble').disabled=true;while(val(dealerCards)<17)dealerCards.push(deck.pop());render();setTimeout(showResult,700)}
+        function double(){if(balance<bet)return;balance-=bet;bet*=2;playerCards.push(deck.pop());stand()}
+
+        function showResult() {
+            var p=val(playerCards),d=val(dealerCards),win=0,msg='';
+            if(p>21){msg='Bust!';win=0;losses++}else if(d>21){msg='Dealer bust!';win=bet*2;wins++}else if(p>d){msg='Win!';win=bet*2;wins++}else if(p<d){msg='Lose!';win=0;losses++}else{msg='Push';win=bet}
+            balance+=win; var diff=win-bet;
+            totalGames++; if(diff>0) totalWon+=diff;
+            $('resultText').textContent=msg;
+            $('resultAmount').textContent=(diff>0?'+'+diff.toFixed(2):diff===0?'0':diff.toFixed(2))+' USDT';
+            $('resultAmount').className='result-amount '+(diff>0?'win':diff===0?'push':'lose');
+            $('resultOverlay').classList.add('show');
+            updateUI();
+            render();
+        }
+
+        $('resultCloseBtn').addEventListener('click',function(){
+            $('resultOverlay').classList.remove('show');
+            $('betBlock').style.display='block'; $('actionRow').style.display='none';
+            $('dealerCards').innerHTML=''; $('playerCards').innerHTML='';
+            $('dealerScore').textContent=''; $('playerScore').textContent='';
             fetchBalance();
-            $('depositOverlay').classList.remove('show');
-        } else {
-            alert('Оплата не найдена.');
-        }
-    }
+            bet=parseFloat($('betInput').value)||1;
+            updateUI();
+        });
 
-    $('btnDeposit').addEventListener('click', function() { $('depositOverlay').classList.add('show'); });
-    $('depositClose').addEventListener('click', function() { $('depositOverlay').classList.remove('show'); });
-    $('depositPay').addEventListener('click', depositPay);
-    $('depositCheck').addEventListener('click', depositCheck);
+        $('btnBet').addEventListener('click',function(){bet=parseFloat($('betInput').value)||1;startGame();});
+        $('btnHit').addEventListener('click',hit);
+        $('btnStand').addEventListener('click',stand);
+        $('btnDouble').addEventListener('click',double);
 
-    function shuffle() {
-        deck = [];
-        for (var s = 0; s < 4; s++)
-            for (var v = 0; v < 13; v++)
-                deck.push({ suit: suits[s], value: values[v] });
-        for (var i = deck.length - 1; i > 0; i--) {
-            var j = Math.floor(Math.random() * (i + 1));
-            var t = deck[i]; deck[i] = deck[j]; deck[j] = t;
-        }
-    }
-
-    function val(c) { var s=0,a=0; for(var i=0;i<c.length;i++){var v=c[i].value;if(v==='A'){a++;s+=11}else if(v==='K'||v==='Q'||v==='J')s+=10;else s+=parseInt(v)}while(s>21&&a>0){s-=10;a--}return s }
-    function ch(c,h){var r=c.suit==='♥'||c.suit==='♦';if(h)return'<div class="playing-card back"></div>';return'<div class="playing-card'+(r?' red':'')+'">'+c.value+'<span class="card-suit">'+c.suit+'</span></div>'}
-    function render() {
-        $('dealerCards').innerHTML='';for(var i=0;i<dealerCards.length;i++)$('dealerCards').innerHTML+=ch(dealerCards[i],(i===1&&!gameOver));
-        $('playerCards').innerHTML='';for(var j=0;j<playerCards.length;j++)$('playerCards').innerHTML+=ch(playerCards[j],false);
-        $('dealerScore').textContent=gameOver?val(dealerCards):'?';
-        $('playerScore').textContent=val(playerCards);
-        $('balanceDisplay').textContent=balance.toFixed(2)+' USDT';
-    }
-
-    function startGame() {
-        if(balance<bet){alert('Недостаточно средств');return}
-        shuffle(); dealerCards=[deck.pop(),deck.pop()]; playerCards=[deck.pop(),deck.pop()];
-        gameOver=false; balance-=bet;
-        $('betBlock').style.display='none'; $('actionRow').style.display='flex';
-        $('btnHit').disabled=false; $('btnStand').disabled=false; $('btnDouble').disabled=false;
-        render(); if(val(playerCards)===21) stand();
-    }
-
-    function hit(){playerCards.push(deck.pop());$('btnDouble').disabled=true;render();if(val(playerCards)>=21)stand()}
-    function stand(){gameOver=true;$('btnHit').disabled=true;$('btnStand').disabled=true;$('btnDouble').disabled=true;while(val(dealerCards)<17)dealerCards.push(deck.pop());render();setTimeout(showResult,700)}
-    function double(){if(balance<bet)return;balance-=bet;bet*=2;playerCards.push(deck.pop());stand()}
-
-    function showResult() {
-        var p=val(playerCards),d=val(dealerCards),win=0,msg='';
-        if(p>21){msg='Bust!';win=0}else if(d>21){msg='Dealer bust!';win=bet*2}else if(p>d){msg='Win!';win=bet*2}else if(p<d){msg='Lose!';win=0}else{msg='Push';win=bet}
-        balance+=win; var diff=win-bet;
-        $('resultText').textContent=msg;
-        $('resultAmount').textContent=(diff>0?'+'+diff.toFixed(2):diff===0?'0':diff.toFixed(2))+' USDT';
-        $('resultAmount').className='result-amount '+(diff>0?'win':diff===0?'push':'lose');
-        $('resultOverlay').classList.add('show');
-        render();
-    }
-
-    $('resultCloseBtn').addEventListener('click',function(){
-        $('resultOverlay').classList.remove('show');
-        $('betBlock').style.display='flex'; $('actionRow').style.display='none';
-        $('dealerCards').innerHTML=''; $('playerCards').innerHTML='';
-        $('dealerScore').textContent=''; $('playerScore').textContent='';
         fetchBalance();
-        bet=parseFloat($('betInput').value)||1;
-    });
-
-    $('btnBet').addEventListener('click',function(){bet=parseFloat($('betInput').value)||1;startGame();});
-    $('btnHit').addEventListener('click',hit);
-    $('btnStand').addEventListener('click',stand);
-    $('btnDouble').addEventListener('click',double);
-
-    fetchBalance();
-    render();
-</script>
+        render();
+        $('profileAvatar').textContent = userName.charAt(0).toUpperCase();
+        $('profileName').textContent = userName;
+        $('profileId').textContent = 'ID: ' + userId;
+        updateUI();
+    </script>
 </body>
 </html>
